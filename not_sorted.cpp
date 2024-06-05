@@ -9,36 +9,38 @@ using namespace std;
 	This class is needed to override the push/push_back top/front descrepancy.
 */
 
-NotSorted::empty() const {
+bool NotSorted::empty() {
 	return readyQueue.empty();
 }
-NotSorted::push(process p) const {
-	readyQueue.push_back(p);
+void NotSorted::push(process p)  {
+    readyQueue.push(p);
 }
-NotSorted::top() const {
+process NotSorted::top() const {
 	return readyQueue.front();
 }
-NotSorted::pop() const {
+void NotSorted::pop()  {
 	readyQueue.pop();
 }
 
 
-NotSorted::addLive (process p) const {
-	readyQueue.push_back(p);
+void NotSorted::addLive (process p)  {
+    readyQueue.push(p);
 }
-NotSorted::addNotLive(process p) const {
-	newArrivals[p.getArrivalTime()].push_back(p);
+
+void NotSorted::addNotLive(process p)  {
+    newArrivals[p.getArrival()].push_back(p);
 }
 
 
-NotSorted::getTime(){
+int NotSorted::getTime()const{
 	return globalTime;
 }
-NotSorted::incrementTime() const {
+
+void NotSorted::incrementTime(){
 	newArrivals.erase(globalTime - 1);
 
 	for (auto process : newArrivals[globalTime])
-		readyQueue.push(process)
+        readyQueue.push(process);
 	
 	globalTime++;
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Sleep for 1 second

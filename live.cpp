@@ -1,80 +1,81 @@
-#include "live_ui.h"
-#include "ui_live_ui.h"
-
-using namespace std;
-
-void LiveUI();
-
-LiveUI::LiveUI(QWidget *parent, bool showQuantum, bool showPriority, CommonScheduler scheduler_)
+#include "live.h"
+#include "ui_live.h"
+#include <QPromise>
+void RUN(CommonScheduler *scheduler);
+live::live(QWidget *parent, bool showQuantum, bool showPriority, CommonScheduler* scheduler_)
     : QDialog(parent)
-    , ui(new Ui::LiveUI)
-	, scheduler(scheduler_)
+    , ui(new Ui::live)
+    , scheduler(scheduler_)
 {
+
     ui->setupUi(this);
-	
-	ui->quantum->setVisible(showQuantum);
+    qDebug()<<"hello live";
+    scheduler->setUIPointer(this);
+    qDebug()<<"hello this";
+    ui->quantum->setVisible(showQuantum);
     ui->quantum->setMinimum(1);
-	ui->quantum->setValue(1);
-	
-	ui->priority->setVisible(showPriority);
-	ui->priority->setValue(3);
-	
+    ui->quantum->setValue(1);
+
+    ui->priority->setVisible(showPriority);
+    ui->priority->setValue(3);
+
     startTime = QTime::currentTime();
-	
+
     timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &LiveUI::updateChart); // Connect timer timeout signal to updateChart slot
-    connect(timer, &QTimer::timeout, this, &CommonScheduler::updateAverages);
+    connect(timer, &QTimer::timeout, this, &live::updateChart); // Connect timer timeout signal to updateChart slot
+    connect(timer, &QTimer::timeout, this, &live::updateAverages);
     timer->start(1000); // Start the timer with 1-second interval
-    
-	QtConcurrent::run(LiveUI);
+    QtConcurrent::run(RUN, scheduler);
 }
 
-void LiveUI() {
-	scheduler.start();
-}
-
-void LiveUI::updateChart() {
-    update(); // Update the UI
-}
-
-void updateAverages() {
-	if(scheduler.getProcessNo() <= 0) return;
-	
-	ui->avgturn->setText(QString::number(scheduler.getSumTurnaround() / scheduler.getProcessNo()));
-	ui->avgwait->setText(QString::number(scheduler.getSumWaiting() / scheduler.getProcessNo()));
-}
-
-
-
-LiveUI::~LiveUI()
+live::~live()
 {
+	delete scheduler;
     delete ui;
 }
 
-void LiveUI::on_close_clicked()
+void RUN(CommonScheduler* scheduler) {
+    qDebug()<<"hello run";
+    scheduler->start();
+}
+
+void live::updateChart() {
+    update(); // Update the UI
+}
+
+void live::updateAverages() {
+    if(scheduler->getProcessNo() <= 0) return;
+
+    ui->avgturnt->setText(QString::number(scheduler->getSumTurnaround() / scheduler->getProcessNo()));
+    ui->avgturnt_2->setText(QString::number(scheduler->getSumWaiting() / scheduler->getProcessNo()));
+}
+
+
+
+void live::on_close_clicked()
 {
-	scheduler.stop();
+    scheduler->stop();
     close();
 }
 
-void LiveUI::on_add_clicked()
+void live::on_add_clicked()
 {
-    int burstTime = ui->burst->value();
+    int burstTime = ui->BurstTime->value();
     int priority  = ui->priority->value();
-	
-	if (process::COUNT == 0){
-		int quantum = ui->priority->value();
-		scheduler.setTimeQuantum(quantum);
-		ui->quantum->setVisible(false);
-	}
-		
+
+    if (process::getCount() == 0){
+        int quantum = ui->priority->value();
+        scheduler->setTimeQuantum(quantum);
+        ui->quantum->setVisible(false);
+    }
+
     QTime currentTime = QTime::currentTime();
     int arrivalTime = currentTime.secsTo(startTime);
-    scheduler.addLive(process(arrivalTime, burstTime, priority));
+    scheduler->addLive(process(arrivalTime, burstTime, priority));
 }
 
-void LiveUI::closeEvent(QCloseEvent *event) {
-	scheduler.stop();
+void live::closeEvent(QCloseEvent *event) {
+    scheduler->stop();
     emit childClosed();
     event->accept();
 }

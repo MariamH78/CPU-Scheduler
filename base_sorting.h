@@ -11,14 +11,14 @@
 
 class SortingBase{
 	public:
-		virtual bool empty() const override = 0;
-		virtual void push(process p) const = 0;
-		virtual int top() const = 0;	
-		virtual int pop()  const = 0;		
-		virtual void addLive (process p) const = 0;	
-		virtual void addNotLive(process p) const = 0;	
+        virtual bool empty() = 0;
+        virtual void push(process p)  = 0;
+        virtual process top() const = 0;
+        virtual void pop() = 0;
+        virtual void addLive (process p) = 0;
+        virtual void addNotLive(process p) = 0;
 		virtual int getTime() const = 0;
-		virtual void incrementTime() const = 0;		
+        virtual void incrementTime() = 0;
 };
 
 #endif //SORTING_BASE_H

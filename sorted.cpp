@@ -1,5 +1,5 @@
 #include "sorted.h"
-
+#include <QDebug>
 using namespace std;
 /*
 	this class should handle its own time updates, and have a corresponding 
@@ -24,7 +24,7 @@ Sorted::Sorted(string method){
 
 
 bool Sorted::compareByArrival(process a, process b) {
-	return a.getArrivalTime() > b.getArrivalTime();
+    return a.getArrival() > b.getArrival();
 }
 bool Sorted::compareByPriority(process a, process b) {
 	return a.getPriority() > b.getPriority();
@@ -34,37 +34,37 @@ bool Sorted::compareByBurst(process a, process b) {
 }
 
 
-bool Sorted::empty () const {
+bool Sorted::empty () {
 	return readyQueue.empty();
 }
-void Sorted::push (process p) const {
+void Sorted::push (process p)  {
 	readyQueue.push(p);
 }
-int Sorted::top() const {
+process Sorted::top() const {
 	return readyQueue.top();
 }
-int Sorted::pop() const {
+void Sorted::pop()  {
 	readyQueue.pop();
 }
 
 
-void Sorted::addLive(process p) const{
+void Sorted::addLive(process p) {
 	readyQueue.push(p);
 }
-void Sorted::addNotLive(process p) const{
-	newArrivals[p.getArrivalTime()].push_back(p);
+void Sorted::addNotLive(process p) {
+    newArrivals[p.getArrival()].push_back(p);
 }
 
 
-int Sorted::getTime(){
+int Sorted::getTime()const{
 	return globalTime;
 }
-void Sorted::incrementTime() const {
-	newArrivals.erase(globalTime - 1);
-
+void Sorted::incrementTime()  {
+    //newArrivals.erase(globalTime - 1);
+qDebug()<<globalTime;
 	for (auto process : newArrivals[globalTime])
-		readyQueue.push(process)
+        readyQueue.push(process);
 	
 	globalTime++;
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Sleep for 1 second
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Sleep for 1 second
 }

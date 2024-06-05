@@ -14,17 +14,17 @@
 
 class Preemptive{
 	private:
-		static int timeQuantum = 1;
+        static int timeQuantum;
 		bool preemptive;
 	
 	public:
-		Preemptive(bool preemptive_) : preemptive(preemptive_);
+        Preemptive(bool preemptive_);
 		Preemptive(int timeQuantum_, bool preemptive_);
 
 		bool isPreemptive() const;
 
-		int getTimeQuantum() const;
-		void setTimeQuantum(timeQuantum_);
+        int getTimeQuantum() const;
+        void setTimeQuantum(int timeQuantum_);
 };
 
 #endif

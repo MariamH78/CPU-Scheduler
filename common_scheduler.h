@@ -22,13 +22,14 @@
 
 class CommonScheduler{
 	private:
-		static int processNo = 0;
+        static int processNo;
 		double sumWaiting = 0;
 		double sumTurnaround = 0;
+        QDialog* UIpointer;
 		
 		vector<process> ganttChart;
 		
-		SortingBase& readyQueue; // Member can be of type Sorted or NotSorted.
+        SortingBase& readyQueue; // Member can be of type Sorted or NotSorted.
 								 // Responsible for all queue and time handling.
 		Preemptive preemptive; // Member that determines preemption stuff.
 							   // Only stores the variables, can be removed entirely in a later version.
@@ -39,6 +40,7 @@ class CommonScheduler{
 	public:
 		QTime startT;
 		CommonScheduler(SortingBase& readyQueue_, Preemptive preemptive_);
+        void setUIPointer(QDialog* qd);
 
 		virtual void paintEvent(QPaintEvent *event);
 		
@@ -49,12 +51,13 @@ class CommonScheduler{
 		void addLive(process p);
 		void addNotLive(process p);
 		
-		void setTimeQuantum(timeQuantum_);
+        void setTimeQuantum(int timeQuantum_);
 
 		// Some getters
-		int getSumWaiting() const;
-		int getSumTurnaround() const;
+        double getSumWaiting() const;
+        double getSumTurnaround() const;
 		int getProcessNo() const;
+        virtual ~CommonScheduler() {};
 
 };
 

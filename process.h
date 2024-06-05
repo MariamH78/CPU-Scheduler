@@ -3,7 +3,7 @@
 
 class process {
 private:
-	static int COUNT = 0;
+    static int COUNT;
     int ID;
     int arrival;
     int burst;
@@ -12,8 +12,8 @@ private:
     int priority = 3;
 
 public:
-    process(int id, int arrival_, int burst_, int priority_);
-	int getCount() const;
+    process(int arrival_, int burst_, int priority_);
+    static int getCount();
 	
     int getID() const;
     void setID(int id);

@@ -8,10 +8,10 @@
 */
 
 CommonScheduler::CommonScheduler(SortingBase& readyQueue_, Preemptive preemptive_) : readyQueue (readyQueue_)
-																				   , preemptive (preemptive_){};
-
+                                                                                   , preemptive (preemptive_){};
+int CommonScheduler::processNo = 0;
 void CommonScheduler::paintEvent(QPaintEvent *event) {
-	QPainter painter(this);
+    QPainter painter(UIpointer);
 	int x = 30;
 	int y = 300;
 	int height = 100; // Height of the rectangles
@@ -43,17 +43,23 @@ void CommonScheduler::paintEvent(QPaintEvent *event) {
 		}
 	}
 }
+void CommonScheduler::setUIPointer(QDialog* qd) {
+    UIpointer = qd;
+}
 
 void CommonScheduler::start() {
+    qDebug()<<"hello start";
 	running = 1;
-	while (running) { 
+    while (running) {
+        qDebug()<<"hello running";
 		if (!readyQueue.empty()) {
-			QTime startTime = QTime::currentTime();
+            //QTime startTime = QTime::currentTime();
+            qDebug()<<"hello if";
 			process currentProcess = readyQueue.top();
 			readyQueue.pop();
 			int execTime;
 			if (preemptive.isPreemptive())
-				execTime = min(preemtive.getTimeQuantum(), currentProcess.getBurst());
+                execTime = min(preemptive.getTimeQuantum(), currentProcess.getBurst());
 			else 
 				execTime = currentProcess.getBurst();
 								
@@ -83,15 +89,15 @@ void CommonScheduler::stop(){
 }
 
 void CommonScheduler::addLive(process p) {
-	this.readyQueue.addLive(p);
+    this->readyQueue.addLive(p);
 }
 
 void CommonScheduler::addNotLive(process p) {
-	this.readyQueue.addNotLive(p);
+    this->readyQueue.addNotLive(p);
 }
 
-void CommonScheduler::setTimeQuantum(timeQuantum_){
-	this.preemptive.setTimeQuantum(timeQuantum_);
+void CommonScheduler::setTimeQuantum(int timeQuantum_){
+    this->preemptive.setTimeQuantum(timeQuantum_);
 }
 
 double CommonScheduler::getSumWaiting() const {

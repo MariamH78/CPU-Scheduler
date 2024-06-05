@@ -1,6 +1,6 @@
 #include "process.h"
 
-process::process(int id, int arrival_, int burst_, int priority_)
+process::process(int arrival_, int burst_, int priority_)
 {
     ID = ++COUNT;
     arrival = arrival_;
@@ -12,7 +12,8 @@ process::process(int id, int arrival_, int burst_, int priority_)
 int process::getID()const {
     return ID;
 }
-int process::getCount()const {
+int process::COUNT = 0;
+int process::getCount() {
     return COUNT;
 }
 int process::getArrival()const {

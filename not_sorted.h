@@ -5,7 +5,9 @@
 #include <map>
 #include <queue> 
 #include "process.h"
-#include "sorting_base.cpp"
+#include "base_sorting.h"
+#include <chrono>
+#include <thread>
 
 using namespace std;
 /*
@@ -15,23 +17,23 @@ using namespace std;
 	
 	This class is needed to override the push/push_back top/front descrepancy.
 */
-class NotSorted : public BaseSorting{
+class NotSorted : public SortingBase{
 	private:
 		map <int, vector<process>> newArrivals;
 		queue <process> readyQueue;
 		int globalTime = 0;
 	
 	public:
-		bool empty() const override;
-		void push(process p) const override;
-		int top() const override;
-		int pop() const override;
+        bool empty() override;
+        void push(process p)  override;
+        process top() const override;
+        void pop()  override;
 		
-		void addLive (process p) const override;
-		void addNotLive(process p) const override;
+        void addLive (process p)  override;
+        void addNotLive(process p)  override;
 		
-		int getTime();
-		void incrementTime() const override;
+        int getTime() const override;
+        void incrementTime() override;
 			
 };
 

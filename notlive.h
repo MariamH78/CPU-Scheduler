@@ -1,30 +1,35 @@
-#ifndef NOT_LIVE_H
-#define NOT_LIVE_H
+#ifndef NOTLIVE_H
+#define NOTLIVE_H
+
 
 #include <QDialog>
 #include <QCloseEvent>
 #include "common_scheduler.h"
+#include "live.h"
 
 namespace Ui {
-class NotLiveUI;
+class notlive;
 }
 
-class NotLiveUI : public QDialog
+class notlive : public QDialog
 {
     Q_OBJECT
 signals:
     void childClosed();
 public:
-    explicit NotLiveUI(QWidget *parent = nullptr, bool showQuantum, bool showPriority, CommonScheduler& scheduler_);
-    ~NotLiveUI();
+    explicit notlive(QWidget *parent = nullptr, bool showQuantum=0, bool showPriority=0, CommonScheduler *scheduler_=nullptr);
+    ~notlive();
 private slots:
-    void on_pushButton_clicked();
-    void on_choose_clicked();
+    void on_add_clicked();
     void closeEvent(QCloseEvent *event);
 
 private:
-    Ui::NotLiveUI *ui;
-	static int COUNTER = 0;
+    Ui::notlive *ui;
+    static int COUNTER;
+    CommonScheduler* scheduler;
+    bool showQuantum;
+    bool showPriority;
 };
 
-#endif 
+#endif // NOTLIVE_H
+
