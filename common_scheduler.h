@@ -1,6 +1,7 @@
 #ifndef COMMON_SCHEDULER_H
 #define COMMON_SCHEDULER_H
 
+#include <QObject>
 #include <QDialog>
 #include <vector>
 #include <thread>
@@ -29,7 +30,7 @@ class CommonScheduler{
 		
 		vector<process> ganttChart;
 		
-        SortingBase& readyQueue; // Member can be of type Sorted or NotSorted.
+        SortingBase* readyQueue; // Member can be of type Sorted or NotSorted.
 								 // Responsible for all queue and time handling.
 		Preemptive preemptive; // Member that determines preemption stuff.
 							   // Only stores the variables, can be removed entirely in a later version.
@@ -39,26 +40,26 @@ class CommonScheduler{
 		
 	public:
 		QTime startT;
-		CommonScheduler(SortingBase& readyQueue_, Preemptive preemptive_);
+        CommonScheduler(SortingBase* readyQueue_, Preemptive preemptive_);
         void setUIPointer(QDialog* qd);
 
-		virtual void paintEvent(QPaintEvent *event);
+        void paintEvent();
 		
 		void start();
-		void stop();
+        void stop();
 		
 		// A few wrapper functions
 		void addLive(process p);
 		void addNotLive(process p);
-		
+        int  getTime() const;
         void setTimeQuantum(int timeQuantum_);
 
 		// Some getters
         double getSumWaiting() const;
         double getSumTurnaround() const;
 		int getProcessNo() const;
-        virtual ~CommonScheduler() {};
 
+        ~CommonScheduler();
 };
 
 

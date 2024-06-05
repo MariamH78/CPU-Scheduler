@@ -14,19 +14,17 @@ class notlive;
 class notlive : public QDialog
 {
     Q_OBJECT
-signals:
-    void childClosed();
+
 public:
     explicit notlive(QWidget *parent = nullptr, bool showQuantum=0, bool showPriority=0, CommonScheduler *scheduler_=nullptr);
     ~notlive();
 private slots:
     void on_add_clicked();
-    void closeEvent(QCloseEvent *event);
 
 private:
     Ui::notlive *ui;
     static int COUNTER;
-    CommonScheduler* scheduler;
+    CommonScheduler *scheduler;
     bool showQuantum;
     bool showPriority;
 };

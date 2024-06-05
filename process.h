@@ -6,6 +6,7 @@ private:
     static int COUNT;
     int ID;
     int arrival;
+    int initialBurst;
     int burst;
     int waitingTime = 0;
     int turnaroundTime = 0;

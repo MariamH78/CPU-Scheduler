@@ -25,7 +25,7 @@ class Sorted : public SortingBase{
 	private:
 		map <int, vector<process>> newArrivals;
 		priority_queue <process, vector<process>, function<bool(process, process)>> readyQueue;
-		int globalTime = 0;
+        int globalTime = -1;
 		
 		static bool compareByArrival(process a, process b);
 		static bool compareByPriority(process a, process b);

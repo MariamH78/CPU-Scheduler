@@ -37,12 +37,9 @@ int NotSorted::getTime()const{
 }
 
 void NotSorted::incrementTime(){
-	newArrivals.erase(globalTime - 1);
-
-	for (auto process : newArrivals[globalTime])
+    newArrivals.erase(globalTime);
+    globalTime++;
+    for (auto process : newArrivals[globalTime])
         readyQueue.push(process);
-	
-	globalTime++;
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Sleep for 1 second
-	
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Sleep for 1 second
 }

@@ -1,6 +1,6 @@
 #ifndef SORTING_BASE_H
 #define SORTING_BASE_H
-
+#include <QDebug>
 #include "process.h"
 
 /*

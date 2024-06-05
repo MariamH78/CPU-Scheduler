@@ -1,5 +1,5 @@
 #include "sorted.h"
-#include <QDebug>
+
 using namespace std;
 /*
 	this class should handle its own time updates, and have a corresponding 
@@ -14,7 +14,7 @@ using namespace std;
 
 Sorted::Sorted(string method){
 	if (method == "arrival")
-		readyQueue = priority_queue<process, vector<process>, function<bool(process, process)>>(compareByArrival);
+        readyQueue = priority_queue<process, vector<process>, function<bool(process, process)>>(compareByArrival);
 	else if (method == "priority")
 		readyQueue = priority_queue<process, vector<process>, function<bool(process, process)>>(compareByPriority);
 	else if (method == "burst")
@@ -59,12 +59,10 @@ void Sorted::addNotLive(process p) {
 int Sorted::getTime()const{
 	return globalTime;
 }
-void Sorted::incrementTime()  {
-    //newArrivals.erase(globalTime - 1);
-qDebug()<<globalTime;
+void Sorted::incrementTime() {
+    newArrivals.erase(globalTime);
+    globalTime++;
 	for (auto process : newArrivals[globalTime])
         readyQueue.push(process);
-	
-	globalTime++;
     std::this_thread::sleep_for(std::chrono::milliseconds(1000)); // Sleep for 1 second
 }

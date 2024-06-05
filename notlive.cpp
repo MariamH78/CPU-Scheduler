@@ -1,6 +1,7 @@
 #include "notlive.h"
 #include "ui_notlive.h"
 #include "live.h"
+#include "mainwindow.h"
 
 using namespace std;
 
@@ -16,17 +17,21 @@ notlive::notlive(QWidget *parent, bool showQuantum_, bool showPriority_, CommonS
     ui->num->setMinimum(1);
     ui->num->setValue(1);
 
+
+    //ui->quantum_label->setVisible(showQuantum);
     ui->quantum->setVisible(showQuantum);
     ui->quantum->setMinimum(1);
     ui->quantum->setValue(1);
 
+    //ui->priority_label->setVisible(showPriority);
     ui->priority->setVisible(showPriority);
     ui->priority->setValue(3);
 }
+
 int notlive::COUNTER = 0;
+
 notlive::~notlive()
 {
-	delete scheduler;
     delete ui;
 }
 
@@ -35,7 +40,6 @@ void notlive::on_add_clicked()
 {
     // Static
     COUNTER++;
-    qDebug()<<COUNTER;
     int burstTime = ui->btime->value();
     int arrivalTime = ui->atime->value();
 
@@ -53,14 +57,9 @@ void notlive::on_add_clicked()
 
     if(COUNTER == (ui->num->value())){
         scheduler->setTimeQuantum(quantum);
-        live* subwindow = new live(this,showQuantum,showPriority, scheduler);
-        subwindow->show();
+        live* subwindow = new live(this->parentWidget(), showQuantum, showPriority, scheduler);
         close();
+        subwindow->show();
+        emit subwindow->startSignal();
     }
-}
-
-void notlive::closeEvent(QCloseEvent *event) {
-    scheduler->stop();
-    emit childClosed();
-    event->accept();
 }

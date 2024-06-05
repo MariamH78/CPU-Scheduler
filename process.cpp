@@ -4,6 +4,7 @@ process::process(int arrival_, int burst_, int priority_)
 {
     ID = ++COUNT;
     arrival = arrival_;
+    initialBurst = burst_;
     burst = burst_;
     priority = priority_;
 }
@@ -50,7 +51,7 @@ int process::getTurnaroundTime()const {
 
 //function to calculate waiting time
 void process::calcProcessWaitingTime(int finishTime) {
-    waitingTime = finishTime - this->burst - this->arrival;
+    waitingTime = finishTime - this->initialBurst - this->arrival;
 }
 
 //function to calculate turnaround time

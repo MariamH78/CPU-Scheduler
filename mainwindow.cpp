@@ -23,64 +23,67 @@ MainWindow::MainWindow(QWidget *parent)
     ui->comboBox->addItem("Priority Non-preemptive");
     ui->comboBox->addItem("Round Robin");
 
+    ui->comboBox_2->addItem("Not Live");
     ui->comboBox_2->addItem("Live");
-    ui->comboBox_2->addItem("Not live");
 }
 
 MainWindow::~MainWindow()
 {
+    //qDebug()<<"deleting sched";
+
+    delete scheduler;
     delete ui;
 }
 
-
 void MainWindow::on_pushButton_clicked()
 {
-    int  selectedScheduler = ui -> comboBox  -> currentIndex();
+    int  selectedScheduler = ui -> comboBox   -> currentIndex();
     bool selectedLive      = ui -> comboBox_2 -> currentIndex();
 	
 	bool showQuantum;
-	bool showPriority;
-	CommonScheduler* scheduler;
-    Sorted sorted("burst");
-	NotSorted notSorted;
+    bool showPriority;
+
+    Sorted* sorted;
+    NotSorted* notSorted;
+
 	switch (selectedScheduler) {
 		case ROUND_ROBIN:
 			showQuantum = 1;
 			showPriority = 0;
-            notSorted = NotSorted();
+            notSorted = new NotSorted();
             scheduler = new CommonScheduler(notSorted, Preemptive(1));
 			break;
-			
+
 		case FCFS:
 			showQuantum = 0;
 			showPriority = 0;
-            sorted = Sorted("arrival");
-			scheduler = new CommonScheduler(sorted, Preemptive(0));			
+            sorted = new Sorted("arrival");
+            scheduler = new CommonScheduler(sorted, Preemptive(0));
 			break;
 			
 		case SJF_PREEMPT:
 			showQuantum = 0;
 			showPriority = 0;
-            sorted = Sorted("burst");
+            sorted = new Sorted("burst");
             scheduler = new CommonScheduler(sorted, Preemptive(1));
 			break;
 		case SJF_NON_PREEMPT:
 			showQuantum = 0;
 			showPriority = 0;
-            sorted = Sorted("burst");
+            sorted = new Sorted("burst");
             scheduler = new CommonScheduler(sorted, Preemptive(0));
 			break;
 			
 		case PRI_PREEMPT:
 			showQuantum = 0;
 			showPriority = 1;
-            sorted = Sorted("priority");
+            sorted = new Sorted("priority");
             scheduler = new CommonScheduler(sorted, Preemptive(1));
 			break;
 		case PRI_NON_PREEMPT:
 			showQuantum = 0;
 			showPriority = 1;
-            sorted = Sorted("priority");
+            sorted = new Sorted("priority");
             scheduler = new CommonScheduler(sorted, Preemptive(0));
             break;
 
@@ -88,17 +91,15 @@ void MainWindow::on_pushButton_clicked()
 			break;
     }
 	
-    if (selectedLive == 0){
-        live* subwindow = new live(this, showQuantum, showPriority, scheduler);
+    if (selectedLive){
+        live* subwindow = new live(this->parentWidget(), showQuantum, showPriority, scheduler);
         subwindow->show();
-        connect(subwindow, &live::childClosed, this, &MainWindow::close);
-    } else if (selectedLive == 1){
-        notlive* subwindow = new notlive(this, showQuantum, showPriority, scheduler);
+    } else {
+        notlive* subwindow = new notlive(this->parentWidget(), showQuantum, showPriority, scheduler);
         subwindow->show();
-        connect(subwindow, &notlive::childClosed, this, &MainWindow::close);
 	}
-	
-	hide();
+
+    close();
 }
 
 

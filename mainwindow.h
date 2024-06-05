@@ -1,7 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include<QCloseEvent>
 #include <QMainWindow>
+#include "common_scheduler.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -33,5 +35,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    CommonScheduler* scheduler;
 };
 #endif // MAINWINDOW_H

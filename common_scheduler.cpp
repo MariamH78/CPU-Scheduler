@@ -7,10 +7,10 @@
 	
 */
 
-CommonScheduler::CommonScheduler(SortingBase& readyQueue_, Preemptive preemptive_) : readyQueue (readyQueue_)
-                                                                                   , preemptive (preemptive_){};
+CommonScheduler::CommonScheduler(SortingBase* readyQueue_, Preemptive preemptive_) : readyQueue (readyQueue_)
+                                                                                   , preemptive (preemptive_){}
 int CommonScheduler::processNo = 0;
-void CommonScheduler::paintEvent(QPaintEvent *event) {
+void CommonScheduler::paintEvent() {
     QPainter painter(UIpointer);
 	int x = 30;
 	int y = 300;
@@ -48,15 +48,12 @@ void CommonScheduler::setUIPointer(QDialog* qd) {
 }
 
 void CommonScheduler::start() {
-    qDebug()<<"hello start";
 	running = 1;
     while (running) {
-        qDebug()<<"hello running";
-		if (!readyQueue.empty()) {
-            //QTime startTime = QTime::currentTime();
-            qDebug()<<"hello if";
-			process currentProcess = readyQueue.top();
-			readyQueue.pop();
+        if (!readyQueue->empty()) {
+            process currentProcess = readyQueue->top();
+            //qDebug() << getTime() << ' ' << currentProcess.getID();
+            readyQueue->pop();
 			int execTime;
 			if (preemptive.isPreemptive())
                 execTime = min(preemptive.getTimeQuantum(), currentProcess.getBurst());
@@ -65,50 +62,63 @@ void CommonScheduler::start() {
 								
 			while (execTime--) {
 				currentProcess.setBurst(currentProcess.getBurst() - 1);
-				readyQueue.incrementTime();
+                readyQueue->incrementTime();
 				ganttChart.push_back(currentProcess);
 			}
 			
 			if (currentProcess.getBurst() > 0) {
-				readyQueue.push(currentProcess);
-			} else {
-				currentProcess.calcProcessTurnaroundTime(readyQueue.getTime());
-				currentProcess.calcProcessWaitingTime(readyQueue.getTime());
+                readyQueue->push(currentProcess);
+            } else {
+                currentProcess.calcProcessTurnaroundTime(getTime() - 0);
+                currentProcess.calcProcessWaitingTime(getTime() - 0);
 				sumWaiting += currentProcess.getWaitingTime();
-				sumTurnaround += currentProcess.getTurnaroundTime();
+                sumTurnaround += currentProcess.getTurnaroundTime();
 				processNo++;
-			}	
-			
+/*
+                qDebug() << "Processno: " << processNo << ' '
+                         << "waiting time: " << currentProcess.getWaitingTime()
+                         << "turnaround: " << currentProcess.getTurnaroundTime();
+*/
+            }
 		} else 
-			readyQueue.incrementTime();
+            readyQueue->incrementTime();
 	}
 }
 
-void CommonScheduler::stop(){
-	running = 0;
+
+// Getters
+double CommonScheduler::getSumWaiting() const {
+    return sumWaiting;
+}
+double CommonScheduler::getSumTurnaround() const {
+    return sumTurnaround;
+}
+int CommonScheduler::getProcessNo() const {
+    return processNo;
 }
 
+// Wrappers
 void CommonScheduler::addLive(process p) {
-    this->readyQueue.addLive(p);
+    this->readyQueue->addLive(p);
 }
-
 void CommonScheduler::addNotLive(process p) {
-    this->readyQueue.addNotLive(p);
+    this->readyQueue->addNotLive(p);
 }
-
+int CommonScheduler::getTime() const {
+    return (this->readyQueue)->getTime();
+}
 void CommonScheduler::setTimeQuantum(int timeQuantum_){
     this->preemptive.setTimeQuantum(timeQuantum_);
 }
 
-double CommonScheduler::getSumWaiting() const {
-	return sumWaiting;
-}
 
-double CommonScheduler::getSumTurnaround() const {
-	return sumTurnaround;
-}
 
-int CommonScheduler::getProcessNo() const {
-	return processNo;
-}
 
+CommonScheduler::~CommonScheduler(){
+    //qDebug()<<"it IS in fact, deleted";
+    if (this -> readyQueue)
+        delete this -> readyQueue;
+}
+void CommonScheduler::stop(){
+    running = 0;
+}

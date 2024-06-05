@@ -1,7 +1,8 @@
 #include "live.h"
 #include "ui_live.h"
-#include <QPromise>
-void RUN(CommonScheduler *scheduler);
+
+void START(CommonScheduler* scheduler);
+
 live::live(QWidget *parent, bool showQuantum, bool showPriority, CommonScheduler* scheduler_)
     : QDialog(parent)
     , ui(new Ui::live)
@@ -9,9 +10,8 @@ live::live(QWidget *parent, bool showQuantum, bool showPriority, CommonScheduler
 {
 
     ui->setupUi(this);
-    qDebug()<<"hello live";
     scheduler->setUIPointer(this);
-    qDebug()<<"hello this";
+
     ui->quantum->setVisible(showQuantum);
     ui->quantum->setMinimum(1);
     ui->quantum->setValue(1);
@@ -25,17 +25,17 @@ live::live(QWidget *parent, bool showQuantum, bool showPriority, CommonScheduler
     connect(timer, &QTimer::timeout, this, &live::updateChart); // Connect timer timeout signal to updateChart slot
     connect(timer, &QTimer::timeout, this, &live::updateAverages);
     timer->start(1000); // Start the timer with 1-second interval
-    QtConcurrent::run(RUN, scheduler);
+
+    QtConcurrent::run(START,scheduler);
 }
 
 live::~live()
 {
-	delete scheduler;
     delete ui;
 }
 
-void RUN(CommonScheduler* scheduler) {
-    qDebug()<<"hello run";
+void START(CommonScheduler* scheduler) {
+    //qDebug()<<"inside live::start";
     scheduler->start();
 }
 
@@ -43,19 +43,15 @@ void live::updateChart() {
     update(); // Update the UI
 }
 
+void live::paintEvent(QPaintEvent *event){
+    scheduler->paintEvent();
+}
+
 void live::updateAverages() {
     if(scheduler->getProcessNo() <= 0) return;
 
     ui->avgturnt->setText(QString::number(scheduler->getSumTurnaround() / scheduler->getProcessNo()));
     ui->avgturnt_2->setText(QString::number(scheduler->getSumWaiting() / scheduler->getProcessNo()));
-}
-
-
-
-void live::on_close_clicked()
-{
-    scheduler->stop();
-    close();
 }
 
 void live::on_add_clicked()
@@ -69,14 +65,8 @@ void live::on_add_clicked()
         ui->quantum->setVisible(false);
     }
 
-    QTime currentTime = QTime::currentTime();
-    int arrivalTime = currentTime.secsTo(startTime);
+    int arrivalTime = scheduler->getTime();
+    //qDebug()<< "current time: " << arrivalTime;
     scheduler->addLive(process(arrivalTime, burstTime, priority));
-}
-
-void live::closeEvent(QCloseEvent *event) {
-    scheduler->stop();
-    emit childClosed();
-    event->accept();
 }
 
