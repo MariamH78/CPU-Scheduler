@@ -11,11 +11,14 @@ live::live(QWidget *parent, bool showQuantum, bool showPriority, CommonScheduler
 
     ui->setupUi(this);
     scheduler->setUIPointer(this);
+    ui->BurstTime->setMinimum(1);
 
+    ui->quantum_label->setVisible(showQuantum);
     ui->quantum->setVisible(showQuantum);
     ui->quantum->setMinimum(1);
     ui->quantum->setValue(1);
 
+    ui->priority_label->setVisible(showPriority);
     ui->priority->setVisible(showPriority);
     ui->priority->setValue(3);
 

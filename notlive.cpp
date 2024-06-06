@@ -15,15 +15,14 @@ notlive::notlive(QWidget *parent, bool showQuantum_, bool showPriority_, CommonS
 {
     ui->setupUi(this);
     ui->num->setMinimum(1);
-    ui->num->setValue(1);
+    ui->btime->setMinimum(1);
 
-
-    //ui->quantum_label->setVisible(showQuantum);
+    ui->quantum_label->setVisible(showQuantum);
     ui->quantum->setVisible(showQuantum);
     ui->quantum->setMinimum(1);
     ui->quantum->setValue(1);
 
-    //ui->priority_label->setVisible(showPriority);
+    ui->priority_label->setVisible(showPriority);
     ui->priority->setVisible(showPriority);
     ui->priority->setValue(3);
 }
