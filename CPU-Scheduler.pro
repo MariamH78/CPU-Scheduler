@@ -14,22 +14,10 @@ QT += widgets concurrent
 #DEFINES += QT_DISABLE_DEPRECATED_UP_TO=0x060000 # disables all APIs deprecated in Qt 6.0.0 and earlier
 
 # Input
-HEADERS += base_sorting.h \
-           common_scheduler.h \
-           live.h \
-           mainwindow.h \
-           not_sorted.h \
-           notlive.h \
-           preemptive.h \
-           process.h \
-           sorted.h
-FORMS += live.ui mainwindow.ui notlive.ui
-SOURCES += common_scheduler.cpp \
-           live.cpp \
-           main.cpp \
-           mainwindow.cpp \
-           not_sorted.cpp \
-           notlive.cpp \
-           preemptive.cpp \
-           process.cpp \
-           sorted.cpp
+HEADERS = $$files(headers/*.h)
+INCLUDEPATH += headers/
+
+SOURCES = $$files(sources/*.cpp)
+
+FORMS += $$files(forms/*.ui)
+
